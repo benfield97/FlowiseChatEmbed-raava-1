@@ -60,7 +60,7 @@ export const Badge = (props: Props) => {
         id="lite-badge"
         style={{ 'font-weight': 'bold', color: props.poweredByTextColor ?? defaultTextColor }}
       >
-        <span> Airstack</span>
+        <span> Airstack test</span>
       </a>
     </span>
   );
