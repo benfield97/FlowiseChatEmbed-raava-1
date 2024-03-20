@@ -1,7 +1,7 @@
-import { ShortTextInput } from './ShortTextInput';
-import { isMobile } from '@/utils/isMobileSignal';
-import { createSignal, createEffect, onMount } from 'solid-js';
 import { SendButton } from '@/components/SendButton';
+import { isMobile } from '@/utils/isMobileSignal';
+import { createEffect, createSignal, onMount } from 'solid-js';
+import { ShortTextInput } from './ShortTextInput';
 
 type Props = {
   placeholder?: string;
@@ -19,11 +19,11 @@ const defaultTextColor = '#303235';
 
 export const TextInput = (props: Props) => {
   const [inputValue, setInputValue] = createSignal(props.defaultValue ?? '');
-  let inputRef: HTMLInputElement | HTMLTextAreaElement | undefined;
+  let textareaRef: HTMLTextAreaElement | undefined;
 
   const handleInput = (inputValue: string) => setInputValue(inputValue);
 
-  const checkIfInputIsValid = () => inputValue() !== '' && inputRef?.reportValidity();
+  const checkIfInputIsValid = () => inputValue() !== '' && textareaRef?.reportValidity();
 
   const submit = () => {
     if (checkIfInputIsValid()) props.onSubmit(inputValue());
@@ -33,15 +33,18 @@ export const TextInput = (props: Props) => {
   const submitWhenEnter = (e: KeyboardEvent) => {
     // Check if IME composition is in progress
     const isIMEComposition = e.isComposing || e.keyCode === 229;
-    if (e.key === 'Enter' && !isIMEComposition) submit();
+    if (e.key === 'Enter' && !e.shiftKey && !isIMEComposition) {
+      e.preventDefault();
+      submit();
+    }
   };
 
   createEffect(() => {
-    if (!props.disabled && !isMobile() && inputRef) inputRef.focus();
+    if (!props.disabled && !isMobile() && textareaRef) textareaRef.focus();
   });
 
   onMount(() => {
-    if (!isMobile() && inputRef) inputRef.focus();
+    if (!isMobile() && textareaRef) textareaRef.focus();
   });
 
   return (
@@ -59,10 +62,9 @@ export const TextInput = (props: Props) => {
         'background-color': props.backgroundColor ?? defaultBackgroundColor,
         color: props.textColor ?? defaultTextColor,
       }}
-      onKeyDown={submitWhenEnter}
     >
       <ShortTextInput
-        ref={inputRef as HTMLInputElement}
+        ref={textareaRef}
         onInput={handleInput}
         value={inputValue()}
         fontSize={props.fontSize}
