@@ -1,18 +1,18 @@
-import { createSignal, createEffect, For, onMount, Show, mergeProps, createMemo, Accessor } from 'solid-js';
+import { DeleteButton } from '@/components/SendButton';
+import { Avatar } from '@/components/avatars/Avatar';
+import { BotMessageTheme, TextInputTheme, UserMessageTheme } from '@/features/bubble/types';
+import { Popup } from '@/features/popup';
+import { IncomingInput, getChatbotConfig, isStreamAvailableQuery, sendMessageQuery } from '@/queries/sendMessageQuery';
+import socketIOClient from 'socket.io-client';
+import { For, Show, createEffect, createMemo, createSignal, mergeProps, onMount } from 'solid-js';
 import { v4 as uuidv4 } from 'uuid';
-import { sendMessageQuery, isStreamAvailableQuery, IncomingInput, getChatbotConfig } from '@/queries/sendMessageQuery';
-import { TextInput } from './inputs/textInput';
-import { GuestBubble } from './bubbles/GuestBubble';
+import { Badge } from './Badge';
 import { BotBubble } from './bubbles/BotBubble';
+import { GuestBubble } from './bubbles/GuestBubble';
 import { LoadingBubble } from './bubbles/LoadingBubble';
 import { SourceBubble } from './bubbles/SourceBubble';
 import { StarterPromptBubble } from './bubbles/StarterPromptBubble';
-import { BotMessageTheme, TextInputTheme, UserMessageTheme } from '@/features/bubble/types';
-import { Badge } from './Badge';
-import socketIOClient from 'socket.io-client';
-import { Popup } from '@/features/popup';
-import { Avatar } from '@/components/avatars/Avatar';
-import { DeleteButton } from '@/components/SendButton';
+import { TextInput } from './inputs/textInput';
 
 type messageType = 'apiMessage' | 'userMessage' | 'usermessagewaiting';
 
@@ -373,7 +373,7 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
     const socket = socketIOClient(props.apiHost as string);
 
     socket.on('connect', () => {
-      setSocketIOClientId(socket.id);
+      setSocketIOClientId(socket.id || 'default-id');
     });
 
     socket.on('start', () => {

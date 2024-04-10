@@ -1,7 +1,7 @@
+import { sendFileDownloadQuery } from '@/queries/sendMessageQuery';
+import { Marked } from '@ts-stack/markdown';
 import { Show, onMount } from 'solid-js';
 import { Avatar } from '../avatars/Avatar';
-import { Marked } from '@ts-stack/markdown';
-import { sendFileDownloadQuery } from '@/queries/sendMessageQuery';
 
 type Props = {
   message: string;
@@ -31,6 +31,7 @@ export const BotBubble = (props: Props) => {
       const downloadUrl = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = downloadUrl;
+      link.target = '_parent'; // Open in new tab
       link.download = fileAnnotation.fileName;
       document.body.appendChild(link);
       link.click();
@@ -43,6 +44,15 @@ export const BotBubble = (props: Props) => {
   onMount(() => {
     if (botMessageEl) {
       botMessageEl.innerHTML = Marked.parse(props.message);
+      
+      // Find all the links within the rendered message
+      const links = botMessageEl.querySelectorAll('a');
+
+      // Set the target attribute for each link
+      links.forEach((link) => {
+        link.target = '_parent'; // or '_blank' for opening in a new tab
+        link.rel = 'noopener noreferrer';
+      });
       if (props.fileAnnotations && props.fileAnnotations.length) {
         for (const annotations of props.fileAnnotations) {
           const button = document.createElement('button');

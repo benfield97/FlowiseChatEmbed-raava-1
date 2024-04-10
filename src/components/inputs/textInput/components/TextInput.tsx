@@ -1,3 +1,4 @@
+// TextInput.tsx
 import { SendButton } from '@/components/SendButton';
 import { isMobile } from '@/utils/isMobileSignal';
 import { createEffect, createSignal, onMount } from 'solid-js';
@@ -30,12 +31,19 @@ export const TextInput = (props: Props) => {
     setInputValue('');
   };
 
-  const submitWhenEnter = (e: KeyboardEvent) => {
+  const handleKeyDown = (e: KeyboardEvent) => {
     // Check if IME composition is in progress
-    const isIMEComposition = e.isComposing || e.keyCode === 229;
-    if (e.key === 'Enter' && !e.shiftKey && !isIMEComposition) {
-      e.preventDefault();
-      submit();
+    const isIMEComposition = e.isComposing;
+
+    if (e.key === 'Enter' && !isIMEComposition) {
+      if (e.shiftKey) {
+        // Create a new line when 'Shift + Enter' is pressed
+        setInputValue((prevValue) => prevValue + '\n');
+      } else {
+        // Prevent the default behavior of 'Enter' key
+        e.preventDefault();
+        submit();
+      }
     }
   };
 
@@ -70,6 +78,7 @@ export const TextInput = (props: Props) => {
         fontSize={props.fontSize}
         disabled={props.disabled}
         placeholder={props.placeholder ?? 'Type your question'}
+        onKeyDown={handleKeyDown}
       />
       <SendButton
         sendButtonColor={props.sendButtonColor}
