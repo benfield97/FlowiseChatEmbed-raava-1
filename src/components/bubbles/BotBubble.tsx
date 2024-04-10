@@ -44,15 +44,16 @@ export const BotBubble = (props: Props) => {
   onMount(() => {
     if (botMessageEl) {
       botMessageEl.innerHTML = Marked.parse(props.message);
-      
+
       // Find all the links within the rendered message
       const links = botMessageEl.querySelectorAll('a');
 
       // Set the target attribute for each link
       links.forEach((link) => {
-        link.target = '_parent'; // or '_blank' for opening in a new tab
+        link.target = '_blank'; // or '_blank' for opening in a new tab
         link.rel = 'noopener noreferrer';
       });
+
       if (props.fileAnnotations && props.fileAnnotations.length) {
         for (const annotations of props.fileAnnotations) {
           const button = document.createElement('button');

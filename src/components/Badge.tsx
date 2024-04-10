@@ -54,7 +54,7 @@ export const Badge = (props: Props) => {
       <a
         ref={liteBadge}
         href={'https://www.airstack.ai/'}
-        target="_blank"
+        target="_parent"
         rel="noopener noreferrer"
         class="lite-badge"
         id="lite-badge"
